@@ -91,3 +91,23 @@ class Caixun(scrapy.Spider):
         '''
         f.close()
         #return items
+
+
+class TestSpider(scrapy.Spider):
+    #For testing purpose
+    name="cnbeta"
+    start_urls=["http://www.caixunzz.com/?post=611"]
+
+    def parse(self, response):
+        #self.log("A response received from %s" % response.url)
+        print "A response recevived from %s " %response.url
+        feedback=response.xpath('//a/@href').extract()
+
+        print "*"*10
+
+        for i in feedback:
+            #yield scrapy.Request(i,callback=self.parse)
+            if i != "#":
+                print i
+        print "*"*20
+        print "End"
