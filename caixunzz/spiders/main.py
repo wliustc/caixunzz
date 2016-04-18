@@ -19,6 +19,12 @@ class Caixun(scrapy.Spider):
 
         data=response.xpath('//h2')
         date=response.xpath('//p[contains(@class,"date")]/text()').extract()
+        link=response.xpath('//h2/a[2]/@href').extract()
+        print link
+        '''
+        for i in link:
+            print i
+        '''
         #below has issue, not working , why so  ??
 
         #date=response.css('.date')
