@@ -14,4 +14,5 @@ class CaixunzzItem(scrapy.Item):
     #pass
     data=scrapy.Field()
     date=scrapy.Field()
+    link=scrapy.Field()
 

@@ -67,16 +67,19 @@ class Caixun(scrapy.Spider):
             item=CaixunzzItem()
             item['date']=date_list[i]
             item['data']=data_list[i]
-            print item['date'],item['data']
+            item['link']=link[i]
+            print item['date'],item['data'],item['link']
             f.write(item['date']+'\t')
-            f.write(item['data'])
+            f.write(item['data']+'\t')
+            f.write(item['link']+'\t')
+
             f.write('\n')
             items.append(item)
         '''
             for j in i:
                 print j
         '''
-        print "len of data %d and date %d " %(len(data_list),len(date_list))
+        print "len of data %d and date %d and link %d" %(len(data_list),len(date_list),len(link))
         print "#"*10
         print "end to scrapy"
         print "#"*10
