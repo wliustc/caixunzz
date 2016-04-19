@@ -2,3 +2,6 @@
 *.iml
 *.xml
 *.pyc
+caixunzz/spiders/__init__.pyc
+caixunzz/__init__.pyc
+caixunzz/settings.pyc
