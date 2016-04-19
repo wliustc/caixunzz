@@ -1,6 +1,8 @@
 #-*-coding=utf-8-*-
 import scrapy,codecs
-from caixunzz.items import CaixunzzItem
+from caixunzz.items import CaixunzzItem,CnbetaItem
+from scrapy.contrib.spiders import CrawlSpider,Rule
+from scrapy.contrib.linkextractors import LinkExtractor
 class Caixun(scrapy.Spider):
 
     name="caixunzz"
@@ -95,7 +97,7 @@ class Caixun(scrapy.Spider):
 
 class TestSpider(scrapy.Spider):
     #For testing purpose
-    name="cnbeta"
+    name="qq"
     start_urls=["http://www.qq.com"]
 
     def parse(self, response):
@@ -112,3 +114,18 @@ class TestSpider(scrapy.Spider):
                 yield scrapy.Request(i,callback=self.parse)
         print "*"*20
         print "End"
+
+class CnbetaSpider(CrawlSpider):
+    name='cnbeta'
+    allowed_domains=['cnbeta.com']
+    start_urls=['http://www.cnbeta.com']
+    Rule(LinkExtractor(allow=('/articles/\d+\.htm',)),callback='parse',follow=True)
+
+    def parse(self,response):
+        item=CnbetaItem()
+        item['title']=response.xpath('//title/text()').extract()[0]
+        item['url']=response.url
+        print "*"*10
+        print item['title']
+        print item['url']
+        return item
