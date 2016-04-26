@@ -16,6 +16,3 @@ class CaixunzzItem(scrapy.Item):
     date=scrapy.Field()
     link=scrapy.Field()
 
-class CnbetaItem(scrapy.Item):
-    title=scrapy.Field()
-    url=scrapy.Field()

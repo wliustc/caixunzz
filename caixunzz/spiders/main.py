@@ -3,6 +3,7 @@ import scrapy,codecs
 from caixunzz.items import CaixunzzItem,CnbetaItem
 from scrapy.contrib.spiders import CrawlSpider,Rule
 from scrapy.contrib.linkextractors import LinkExtractor
+from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 class Caixun(scrapy.Spider):
 
     name="caixunzz"
@@ -116,14 +117,21 @@ class TestSpider(scrapy.Spider):
         print "End"
 
 class CnbetaSpider(CrawlSpider):
+
+    '''
+    this can run properly
+    '''
     name='cnbeta'
     allowed_domains=['cnbeta.com']
     start_urls=['http://www.cnbeta.com']
-    Rule(LinkExtractor(allow=('/articles/\d+\.htm',)),callback='parse',follow=True)
+    rules = (Rule(SgmlLinkExtractor(allow=('/articles/.*\.htm')),callback='parse_page',follow=True),
+             )
+    #Rule(LinkExtractor(allow=('/articles/\d+\.htm',)),callback='parse',follow=True)
 
-    def parse(self,response):
+    def parse_page(self,response):
         item=CnbetaItem()
-        item['title']=response.xpath('//title/text()').extract()[0]
+        print "Current Date: %s" %d
+        item['title']=response.xpath('//title/text()').extract()
         item['url']=response.url
         print "*"*10
         print item['title']
