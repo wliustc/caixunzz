@@ -1,6 +1,9 @@
 #-*-coding=utf-8-*-
 import scrapy,codecs
-from caixunzz.items import CaixunzzItem
+from caixunzz.items import CaixunzzItem,CnbetaItem
+from scrapy.contrib.spiders import CrawlSpider,Rule
+from scrapy.contrib.linkextractors import LinkExtractor
+from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 class Caixun(scrapy.Spider):
 
     name="caixunzz"
@@ -19,6 +22,12 @@ class Caixun(scrapy.Spider):
 
         data=response.xpath('//h2')
         date=response.xpath('//p[contains(@class,"date")]/text()').extract()
+        link=response.xpath('//h2/a[2]/@href').extract()
+        print link
+        '''
+        for i in link:
+            print i
+        '''
         #below has issue, not working , why so  ??
 
         #date=response.css('.date')
@@ -61,16 +70,19 @@ class Caixun(scrapy.Spider):
             item=CaixunzzItem()
             item['date']=date_list[i]
             item['data']=data_list[i]
-            print item['date'],item['data']
+            item['link']=link[i]
+            print item['date'],item['data'],item['link']
             f.write(item['date']+'\t')
-            f.write(item['data'])
+            f.write(item['data']+'\t')
+            f.write(item['link']+'\t')
+
             f.write('\n')
             items.append(item)
         '''
             for j in i:
                 print j
         '''
-        print "len of data %d and date %d " %(len(data_list),len(date_list))
+        print "len of data %d and date %d and link %d" %(len(data_list),len(date_list),len(link))
         print "#"*10
         print "end to scrapy"
         print "#"*10
@@ -82,3 +94,46 @@ class Caixun(scrapy.Spider):
         '''
         f.close()
         #return items
+
+
+class TestSpider(scrapy.Spider):
+    #For testing purpose
+    name="qq"
+    start_urls=["http://www.qq.com"]
+
+    def parse(self, response):
+        #self.log("A response received from %s" % response.url)
+        print "A response recevived from %s " %response.url
+        feedback=response.xpath('//a/@href').extract()
+
+        print "*"*10
+        print "how much href %d" %len(feedback)
+        for i in feedback:
+            #yield scrapy.Request(i,callback=self.parse)
+            if i != "#":
+                print i
+                yield scrapy.Request(i,callback=self.parse)
+        print "*"*20
+        print "End"
+
+class CnbetaSpider(CrawlSpider):
+
+    '''
+    this can run properly
+    '''
+    name='cnbeta'
+    allowed_domains=['cnbeta.com']
+    start_urls=['http://www.cnbeta.com']
+    rules = (Rule(SgmlLinkExtractor(allow=('/articles/.*\.htm')),callback='parse_page',follow=True),
+             )
+    #Rule(LinkExtractor(allow=('/articles/\d+\.htm',)),callback='parse',follow=True)
+
+    def parse_page(self,response):
+        item=CnbetaItem()
+        print "Current Date: %s" %d
+        item['title']=response.xpath('//title/text()').extract()
+        item['url']=response.url
+        print "*"*10
+        print item['title']
+        print item['url']
+        return item
